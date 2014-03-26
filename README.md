@@ -49,9 +49,9 @@ grunt.initConfig({
 
                 specs: {
                     baseUrl: 'test/specs', // where to find client/server/common
-                    client: 'client', // client only tests
-                    server: 'server', // server only tests
-                    common: 'common', // common tests
+                    client: 'client/**/*.js', // client only tests
+                    server: 'server/**/*.js', // server only tests
+                    common: 'common/**/*.js', // common tests
                     'client-target': 'test/specs/html' // location to write client specs
                 },
 
@@ -114,6 +114,10 @@ grunt castle:repo:lcov # generate LCOV files for client and server
 grunt castle:repo:lcov-client # generate LCOV files for client
 grunt castle:repo:lcov-server # generate LCOV files for server
 
+grunt castle:repo:xunit # generate xunit files for client and server
+grunt castle:repo:xunit-client # generate xunit files for client
+grunt castle:repo:xunit-server # generate xunit files for server
+
 grunt castle:repo:analysis # run static analysis and complexity reports
 ```
 
@@ -146,3 +150,6 @@ describe('Foo Tests', function () {
 ## Release History
 * 0.1.0 - Initial release
 * 0.2.0 - Added ability to specify client and server specs in addition to common specs
+* 0.3.0 - Fixed bugs
+* 0.3.1 - Fixed bugs
+* 0.3.2 - Fixed bugs and cleaned up docs
