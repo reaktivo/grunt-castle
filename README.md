@@ -2,6 +2,9 @@
 
 > Requirejs client, server testing made easy.
 
+A simple working example that will get you up and running quickly can be
+found **[here](https://github.com/jstrimpel/grunt-castle-example)**.
+
 ## Getting Started
 This plugin requires Grunt `~0.4.1`
 
