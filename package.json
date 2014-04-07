@@ -1,7 +1,7 @@
 {
     "name": "grunt-castle",
     "description": "requirejs client, server, and client-server unit testing",
-    "version": "0.3.2",
+    "version": "0.3.3",
     "homepage": "",
     "author": {
         "name": "Jason Strimpel",
@@ -48,7 +48,7 @@
         "sinon": "1.7.x",
         "sinon-chai": "2.1.x",
         "requirejs": "2.1.10",
-        "squirejs": "0.1.x",
+        "squirejs": "git+ssh://git@github.com:iammerrick/Squire.js.git#d64956358272c01021436e6f0380a0a392ad3882",
         "async": "0.2.x",
         "grunt-mocha": "0.4.x",
         "handlebars": "1.0.12",
