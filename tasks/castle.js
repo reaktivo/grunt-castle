@@ -740,7 +740,7 @@ module.exports = function (grunt) {
                         } else if (module === 'chai') {
                             paths[module] = path.dirname(require.resolve(module)) + '/chai';
                         } else if (module === 'sinon') {
-                            paths[module] = path.resolve('node_modules/grunt-castle/vendor/sinon-1.7.1.js').replace('.js', '');
+                            paths[module] = getPath(require.resolve('sinon-built'));
                         } else {
                             paths[module] = getPath(require.resolve(module));
                         }
