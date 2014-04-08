@@ -149,10 +149,3 @@ describe('Foo Tests', function () {
 
 });
 ```
-
-## Release History
-* 0.1.0 - Initial release
-* 0.2.0 - Added ability to specify client and server specs in addition to common specs
-* 0.3.0 - Fixed bugs
-* 0.3.1 - Fixed bugs
-* 0.3.2 - Fixed bugs and cleaned up docs
