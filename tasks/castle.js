@@ -21,14 +21,23 @@ module.exports = function (grunt) {
     var _ = require('lodash');
     var findup = require('findup-sync');
     var testModules = ['squire', 'chai', 'sinon', 'sinon-chai', 'grunt-castle'];
-    var exec = require("child_process").exec;
+    var execFile = require("child_process").execFile;
     var util = require('util');
     var xml2js = require('xml2js');
     var XML = require('xml');
+    var async = require('async');
     var mocha = new Mocha({ui:'bdd'});
 
     // CODE COVERAGE REPORTING UTILS
     function aggregate(results, result, spec) { // mocha json-cov reporter
+        // single file being tested
+        results = results || {
+            hits: 0,
+            misses: 0,
+            sloc: 0,
+            files: []
+        };
+
         var fileResults = _.filter(result.files, function(f) {
             var testFile = f.filename.replace(/js$/i, 'html');
             return new RegExp('(.)*' + testFile + '$', 'i').test(spec);
@@ -445,19 +454,20 @@ module.exports = function (grunt) {
             var covReportPath = this.getCovReportPath('client');
             var self = this;
 
-            specs.forEach(function (spec) {
+            async.eachSeries(specs, function(spec, mochaCallback) {
                 grunt.log.writeln('running client spec:' + spec);
-                var cmd = "node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs " + spec +  " -R json-cov";
-                var mocha = exec(cmd,
-                    { maxBuffer: 10000 * 1024 },
+                var mocha = execFile('./node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs',
+                    [spec, '-R', 'json-cov'],
+                    { maxBuffer: 10000 * 1024, cwd: '.' },
                     function(error, stdout, stderr) {
                         if (!error) {
                             var result = JSON.parse(stdout);
-                            if (!results) {
+                            /*if (!results) {
                                 results = result;
                             } else {
                                 results = aggregate(results, result, spec);
-                            }
+                            }*/
+                            results = aggregate(results, result, spec);
                             count++;
                             if (count === specs.length) {
                                 if (lcov) {
@@ -468,18 +478,27 @@ module.exports = function (grunt) {
                                     }
                                     grunt.log.writeln('writing client coverage report');
                                     writeClientCoverage(results, covReportPath);
-                                    return callback();
+                                    return mochaCallback();
                                 }
                             }
+                            return mochaCallback();
                         } else {
-                            console.error("error executing " + cmd + " : " + error);
+                            grunt.log.error("error executing " + spec + " coverage report : " + error);
                             if (stderr) {
-                                console.error(stderr);
+                                grunt.log.error(stderr);
                             }
-                            process.exit(1);
+                            return callback(error);
                         }
                     }
                 );
+            }, function(error) {
+                if (error) {
+                    grunt.log.error('error code: ' + error.code);
+                    grunt.log.error('error signal: ' + error.signal);
+                    process.exit(error.code || 1);
+                } else {
+                    return callback();
+                }
             });
         },
 
@@ -590,10 +609,11 @@ module.exports = function (grunt) {
             var specs = grunt.file.expand(path.resolve(options.specs['client-target']) + '/**/*.html');
             var self = this;
 
-            specs.forEach(function (spec) {
-                var cmd = "node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs " + spec +  " -R xunit";
-                var mocha = exec(cmd,
-                    { maxBuffer: 10000 * 1024 },
+            async.eachSeries(specs, function(spec, callback) {
+                grunt.log.writeln('running client spec:' + spec);
+                var mocha = execFile('./node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs',
+                    [spec, '-R', 'xunit'],
+                    { maxBuffer: 10000 * 1024, cwd: '.' },
                     function(error, stdout, stderr) {
                         if (!error) {
                             try {
@@ -605,20 +625,24 @@ module.exports = function (grunt) {
                                 if (results.length === specs.length) {
                                     self.writeXunitResults(results, callback);
                                 }
+                                return callback();
                             }
                             catch(err) {
-                                console.error("error: " + err);
-                                process.exit(1);
+                                return callback(err);
                             }
                         } else {
-                            console.error("error executing " + cmd + " : " + error);
-                            if (stderr) {
-                                console.error(stderr);
-                            }
-                            process.exit(1);
+                            grunt.log.error("error executing " + spec + " xunit report : " + error);
+                            grunt.log.error(stderr);
+                            return callback(error);
                         }
                     }
                 );
+            }, function(error) {
+                if (error) {
+                    grunt.log.error('error code: ' + error.code);
+                    grunt.log.error('error signal: ' + error.signal);
+                    process.exit(error.code || 1);
+                }
             });
         },
         // END COVERAGE
@@ -740,7 +764,7 @@ module.exports = function (grunt) {
                         } else if (module === 'chai') {
                             paths[module] = path.dirname(require.resolve(module)) + '/chai';
                         } else if (module === 'sinon') {
-                            paths[module] = path.resolve('node_modules/grunt-castle/vendor/sinon-1.7.1.js').replace('.js', '');
+                            paths[module] = getPath(require.resolve('sinon-built'));
                         } else {
                             paths[module] = getPath(require.resolve(module));
                         }

@@ -45,12 +45,7 @@ define(function () {
                     var curModule = modules[i];
                     if (typeof curModule === 'string'){
                         self._loadMock(curModule, function (module) {
-                            if (typeof module === 'function') {
-                                mocks[curModule] = _Squire.Helpers.returns(module);
-                            } else {
-                                mocks[curModule] = module;
-                            }
-
+                            mocks[curModule] = module;
                             incrementAndCheck();
                         });
                     } else if (typeof curModule === 'object'){
