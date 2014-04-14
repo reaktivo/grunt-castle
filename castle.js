@@ -19,8 +19,8 @@ define(function () {
             var env = isServer ? 'server' : 'client';
             var baseUrl = isServer ? mocks.server.baseUrl : mocks.client.baseUrl;
 
-            return mocks[env].baseUrl + '/' + (mocks[env] && mocks[env].paths && mocks[env].paths[mock] ?
-                mocks[env].paths[mock] : mock) + '.js';
+            return (mocks[env] && mocks[env].paths && mocks[env].paths[mock]) ?
+                mocks[env].paths[mock] : (mocks[env].baseUrl + '/' + mock + '.js');
         },
 
         _loadMock: function (mock, callback) {
