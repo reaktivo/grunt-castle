@@ -142,7 +142,35 @@ module.exports = function (grunt) {
                 }
             }
 
-            options.mocks.baseUrl = path.resolve(options.mocks.baseUrl);
+            function resolveMockPaths(options, env) {
+                var paths = {};
+                var mockFiles = grunt.file.expand(options.mocks[env].baseUrl + '/**/*.js');
+                var appTarget = path.normalize(options.requirejs[env].baseUrl);
+                var len = appTarget.split('/').length;
+                var upStr = '';
+
+                for (var i = 0; i < len; i++) {
+                    upStr += '../';
+                }
+
+                mockFiles.forEach(function (mockFile) {
+                    var basename = path.basename(mockFile, '.js');
+                    paths[basename] = path.dirname(mockFile) + '/' + basename;
+                    paths[basename] = path.normalize(upStr + paths[basename]);
+                });
+
+                for (var k in options.mocks[env].paths) {
+                    options.mocks[env].paths[k] = path.normalize(upStr + options.mocks[env].baseUrl + '/' +
+                        options.mocks[env].paths[k]);
+                }
+
+                options.mocks[env].paths = _.extend({}, requirejsConfs[env].paths, paths, options.mocks[env].paths);
+                options.mocks[env].baseUrl = path.resolve(options.mocks[env].baseUrl);
+            }
+
+            resolveMockPaths(options, 'server');
+            resolveMockPaths(options, 'client');
+
             ['server', 'client', 'common'].forEach(function (env) {
                 specs[env] = grunt.file.expand(resolveGlobs(specs[env]));
                 if (requirejsConfs[env]) {
