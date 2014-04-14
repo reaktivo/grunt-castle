@@ -16,7 +16,11 @@ define(function () {
 
         _resolveMockPath: function (mock) {
             var mocks = this.conf.mocks;
-            return mocks.baseUrl + '/' + (mocks && mocks.paths && mocks.paths[mock] ? mocks.paths[mock] : mock) + '.js';
+            var env = isServer ? 'server' : 'client';
+            var baseUrl = isServer ? mocks.server.baseUrl : mocks.client.baseUrl;
+
+            return mocks[env].baseUrl + '/' + (mocks[env] && mocks[env].paths && mocks[env].paths[mock] ?
+                mocks[env].paths[mock] : mock) + '.js';
         },
 
         _loadMock: function (mock, callback) {
