@@ -47,7 +47,14 @@ grunt.initConfig({
             options: {
 
                 mocks: {
-                    baseUrl: 'test/mocks' // module dependency mocks path
+                    server: {
+                        baseUrl: 'test/mocks', // module dependency mocks path
+                        paths: {} // mock paths
+                    },
+                    client: {
+                        baseUrl: 'test/mocks', // module dependency mocks path
+                        paths: {} // mock paths
+                    }
                 },
 
                 specs: {
@@ -149,3 +156,11 @@ describe('Foo Tests', function () {
 
 });
 ```
+
+## Mock Resolution
+Mocks are resolved in the order listed below. Any conflicting paths are overwritten
+with the value returned by the resolution method that takes precedence in the order below.
+
+1. Paths that have been defined as part of the `mocks.server.paths`, `mocks.client.paths`
+2. Mock file name and mocks baseUrl; this is done for each mock in both environments
+3. Application defined paths, `requirejs.server.paths`, `requirejs.client.paths`
