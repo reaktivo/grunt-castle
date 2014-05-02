@@ -146,11 +146,14 @@ module.exports = function (grunt) {
                 var paths = {};
                 var mockFiles = grunt.file.expand(options.mocks[env].baseUrl + '/**/*.js');
                 var appTarget = path.normalize(options.requirejs[env].baseUrl);
-                var len = appTarget.split('/').length;
+                var dirs = appTarget.split('/');
+                var len = dirs.length;
                 var upStr = '';
 
                 for (var i = 0; i < len; i++) {
-                    upStr += '../';
+                    if (dirs[i] !== '.') {
+                        upStr += '../';
+                    }
                 }
 
                 mockFiles.forEach(function (mockFile) {
