@@ -168,5 +168,5 @@ with the value returned by the resolution method that takes precedence in the or
 ## Spec Naming Convention
 In order to recieve accurate code coverage for the file you are explicitly testing, your
 spec test file path should mirror that of the file it is testing.
-# Example
+#### Example
 If testing `path/to/file.js` your spec file should be `test/path/to/file.js`.
