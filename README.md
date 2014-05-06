@@ -164,3 +164,9 @@ with the value returned by the resolution method that takes precedence in the or
 1. Paths that have been defined as part of the `mocks.server.paths`, `mocks.client.paths`
 2. Mock file name and mocks baseUrl; this is done for each mock in both environments
 3. Application defined paths, `requirejs.server.paths`, `requirejs.client.paths`
+
+## Spec Naming Convention
+In order to recieve accurate code coverage for the file you are explicitly testing, your
+spec test file path should mirror that of the file it is testing.
+#### Example
+If testing `path/to/file.js` your spec file should be `test/path/to/file.js`.
