@@ -38,10 +38,13 @@ module.exports = function (grunt) {
             files: []
         };
 
+        // Only report for the file we're testing
         var fileResults = _.filter(result.files, function(f) {
-            var testFile = f.filename.replace(/js$/i, 'html');
-            return new RegExp('(.)*' + testFile + '$', 'i').test(spec);
+            // Take the filename and remove repo (since test doesn't have a repo and .js
+            // since the tests are .html
+            return spec.indexOf(f.filename.replace(/^repo\/|\.js$/ig, '')) !== -1;
         });
+
         if (fileResults && fileResults.length) {
             results.files = results.files.concat(fileResults);
         }
