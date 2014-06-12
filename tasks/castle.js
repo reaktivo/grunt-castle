@@ -686,7 +686,6 @@ module.exports = function (grunt) {
             var covReportPath = this.getCovReportPath(env);
             var lcovFilename = this.options.reporting && this.options.reporting.lcov ? ('/' + this.options.reporting.lcov.filename) : null;
             var lcovFile = covReportPath + (lcovFilename || '/index.lcov');
-            var stream;
 
             if (!grunt.file.exists(covReportPath)) {
                 grunt.file.mkdir(covReportPath);
@@ -695,7 +694,6 @@ module.exports = function (grunt) {
                 grunt.file.delete(lcovFile);
             }
             grunt.log.writeln('Creating ' + lcovFile + '...');
-            stream = fs.createWriteStream(lcovFile);
 
             var fileCount = results.files.length;
             for (var j = 0; j < fileCount; j++) {
@@ -711,9 +709,8 @@ module.exports = function (grunt) {
                     }
                 }
                 lcov = lcov + 'end_of_record\n';
-                stream.write(lcov);
+                fs.appendFileSync(lcovFile, lcov);
             }
-            stream.end();
             if (env === 'server') {
                 grunt.file.delete(covReportPath + '/index.json');
             }
