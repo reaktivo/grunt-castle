@@ -60,14 +60,14 @@
         "xml2js": "0.4.x",
         "xml": "0.0.x",
         "sinon-built": "1.9.x",
-        "async": "0.7.x"
+        "async": "0.7.x",
+        "xunit-file": "0.0.5"
     },
     "devDependencies": {
         "grunt-contrib-jshint": "~0.6.0",
         "grunt-contrib-clean": "~0.4.0",
         "grunt-contrib-nodeunit": "~0.2.0",
-        "grunt": "~0.4.1",
-        "xunit-file": "0.0.5"
+        "grunt": "~0.4.1"
     },
     "peerDependencies": {
         "grunt": "~0.4.1"
