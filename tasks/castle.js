@@ -605,18 +605,13 @@ module.exports = function (grunt) {
             if (grunt.file.exists(outFile)) {
                 grunt.file.delete(outFile);
             }
-            var output = fs.createWriteStream(outFile, { flags: 'w' });
-            var _stdout = process.stdout.write;
+
             grunt.log.writeln('Creating ' + outFile + ' ...');
+            process.env.XUNIT_FILE = outFile;
 
             var runMocha = function() {
 
-                process.stdout.write = function(chunk, encoding, cb) {
-                    return output.write(chunk, encoding, cb);
-                };
-                mocha.reporter('xunit').run(function () {
-                    output.end();
-                    process.stdout.write = _stdout;
+                mocha.reporter('xunit-file').run(function () {
                     return callback();
                 });
             };
