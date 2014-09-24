@@ -26,7 +26,7 @@ module.exports = function (grunt) {
     var xml2js = require('xml2js');
     var XML = require('xml');
     var async = require('async');
-    var mocha = new Mocha({ui:'bdd'});
+    var mocha = new Mocha({ui: 'bdd'});
 
     // CODE COVERAGE REPORTING UTILS
     function aggregate(results, result, spec) { // mocha json-cov reporter
@@ -39,7 +39,7 @@ module.exports = function (grunt) {
         };
 
         // Only report for the file we're testing
-        var fileResults = _.filter(result.files, function(f) {
+        var fileResults = _.filter(result.files, function (f) {
             // Take the filename and remove repo (since test doesn't have a repo and .js
             // since the tests are .html
             return spec.indexOf(f.filename.replace(/^repo\/|\.js$/ig, '')) !== -1;
@@ -52,7 +52,7 @@ module.exports = function (grunt) {
         results.misses += result.misses;
         results.sloc += result.sloc;
 
-        results.files.sort(function(a, b) {
+        results.files.sort(function (a, b) {
             return a.filename.localeCompare(b.filename);
         });
 
@@ -149,7 +149,7 @@ module.exports = function (grunt) {
                 var paths = {};
                 var mockFiles = grunt.file.expand(options.mocks[env].baseUrl + '/**/*.js');
                 var appTarget = path.normalize(options.requirejs[env].baseUrl);
-                var dirs = appTarget.split('/');
+                var dirs = appTarget.split(path.sep);
                 var len = dirs.length;
                 var upStr = '';
 
@@ -414,7 +414,7 @@ module.exports = function (grunt) {
                 specs.forEach(function (spec, index) {
                     mocha.addFile(path.resolve(spec));
                 });
-                mocha.reporter('spec').run(function() {
+                mocha.reporter('spec').run(function () {
                     callback();
                 });
             }
@@ -435,45 +435,45 @@ module.exports = function (grunt) {
                 args2.push(this.options.reporting.src);
                 args2.push(this.options.reporting.coverage.dest);
 
-            if (!this.options.reporting.highlight) {
-                args2.push('--no-highlight');
-            }
-            if (this.options.reporting.coverage.exclude) {
-                args2.push('--exclude=' + this.options.reporting.coverage.exclude);
-            }
-            if (this.options.reporting.encoding) {
-                args2.push('--encoding=' + this.options.reporting.encoding);
-            }
-            if (this.options.reporting.noInstrument) {
-                var toIgnore = this.options.reporting.noInstrument;
-                if (typeof toIgnore === 'string') {
-                    args2.push('--no-instrument=' + toIgnore);
-                } else {
-                    for (var idx = 0; idx < toIgnore.length; idx++) {
-                        args2.push('--no-instrument=' + toIgnore[idx]);
+                if (!this.options.reporting.highlight) {
+                    args2.push('--no-highlight');
+                }
+                if (this.options.reporting.coverage.exclude) {
+                    args2.push('--exclude=' + this.options.reporting.coverage.exclude);
+                }
+                if (this.options.reporting.encoding) {
+                    args2.push('--encoding=' + this.options.reporting.encoding);
+                }
+                if (this.options.reporting.noInstrument) {
+                    var toIgnore = this.options.reporting.noInstrument;
+                    if (typeof toIgnore === 'string') {
+                        args2.push('--no-instrument=' + toIgnore);
+                    } else {
+                        for (var idx = 0; idx < toIgnore.length; idx++) {
+                            args2.push('--no-instrument=' + toIgnore[idx]);
+                        }
                     }
                 }
-            }
-            if (this.options.reporting.jsVersion) {
-                args2.push('--js-version=' + this.options.reporting.jsVersion);
-            }
+                if (this.options.reporting.jsVersion) {
+                    args2.push('--js-version=' + this.options.reporting.jsVersion);
+                }
 
-            grunt.util.spawn({
-                    cmd: 'jscoverage',
-                    args: args2,
-                    opts: {
-                        stdio: 'inherit'
-                    }
-                },
-                function (error, result) {
-                    if (error) {
-                        grunt.log.error(result.stderr);
-                        callback(false);
-                    }
-                    self.alreadyInstrumented = true;
-                    grunt.log.writeln(result.stdout);
-                    callback();
-                });
+                grunt.util.spawn({
+                        cmd: 'jscoverage',
+                        args: args2,
+                        opts: {
+                            stdio: 'inherit'
+                        }
+                    },
+                    function (error, result) {
+                        if (error) {
+                            grunt.log.error(result.stderr);
+                            callback(false);
+                        }
+                        self.alreadyInstrumented = true;
+                        grunt.log.writeln(result.stdout);
+                        callback();
+                    });
             } else {
                 callback();
             }
@@ -488,19 +488,19 @@ module.exports = function (grunt) {
             var covReportPath = this.getCovReportPath('client');
             var self = this;
 
-            async.eachSeries(specs, function(spec, mochaCallback) {
+            async.eachSeries(specs, function (spec, mochaCallback) {
                 grunt.log.writeln('running client spec:' + spec);
                 var mocha = execFile('./node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs',
                     [spec, '-R', 'json-cov'],
                     { maxBuffer: 10000 * 1024, cwd: '.' },
-                    function(error, stdout, stderr) {
+                    function (error, stdout, stderr) {
                         if (!error) {
                             var result = JSON.parse(stdout);
                             /*if (!results) {
-                                results = result;
-                            } else {
-                                results = aggregate(results, result, spec);
-                            }*/
+                             results = result;
+                             } else {
+                             results = aggregate(results, result, spec);
+                             }*/
                             results = aggregate(results, result, spec);
                             count++;
                             if (count === specs.length) {
@@ -525,7 +525,7 @@ module.exports = function (grunt) {
                         }
                     }
                 );
-            }, function(error) {
+            }, function (error) {
                 if (error) {
                     grunt.log.error('error code: ' + error.code);
                     grunt.log.error('error signal: ' + error.signal);
@@ -556,7 +556,7 @@ module.exports = function (grunt) {
             output = fs.createWriteStream(outFile, { flags: 'w' });
             function run() {
                 grunt.log.writeln('running server specs...');
-                process.stdout.write = function(chunk, encoding, cb) {
+                process.stdout.write = function (chunk, encoding, cb) {
                     return output.write(chunk, encoding, cb);
                 };
                 mocha.reporter(reporter).run(function () {
@@ -609,7 +609,7 @@ module.exports = function (grunt) {
             grunt.log.writeln('Creating ' + outFile + ' ...');
             process.env.XUNIT_FILE = outFile;
 
-            var runMocha = function() {
+            var runMocha = function () {
 
                 mocha.reporter('xunit-file').run(function () {
                     return callback();
@@ -638,12 +638,12 @@ module.exports = function (grunt) {
             var specs = grunt.file.expand(path.resolve(options.specs['client-target']) + '/**/*.html');
             var self = this;
 
-            async.eachSeries(specs, function(spec, callback) {
+            async.eachSeries(specs, function (spec, callback) {
                 grunt.log.writeln('running client spec:' + spec);
                 var mocha = execFile('./node_modules/grunt-castle/node_modules/mocha-phantomjs/bin/mocha-phantomjs',
                     [spec, '-R', 'xunit'],
                     { maxBuffer: 10000 * 1024, cwd: '.' },
-                    function(error, stdout, stderr) {
+                    function (error, stdout, stderr) {
                         if (!error) {
                             try {
                                 var parser = new xml2js.Parser();
@@ -656,7 +656,7 @@ module.exports = function (grunt) {
                                 }
                                 return callback();
                             }
-                            catch(err) {
+                            catch (err) {
                                 return callback(err);
                             }
                         } else {
@@ -666,7 +666,7 @@ module.exports = function (grunt) {
                         }
                     }
                 );
-            }, function(error) {
+            }, function (error) {
                 if (error) {
                     grunt.log.error('error code: ' + error.code);
                     grunt.log.error('error signal: ' + error.signal);
@@ -733,7 +733,9 @@ module.exports = function (grunt) {
                 skipped: "0",
                 time: "0"
             };
-            var contents = [ { _attr: details } ];
+            var contents = [
+                { _attr: details }
+            ];
             for (var i = 0; i < fileCount; i++) {
                 var detail = results[i].testsuite.$;
                 var testCount = parseInt(detail.tests, 10);
@@ -748,12 +750,16 @@ module.exports = function (grunt) {
                 if (results[i].testsuite.testcase) {
                     var testcases = results[i].testsuite.testcase;
                     for (var j = 0; j < testCount - skipCount; j++) {
-                        contents.push( { testcase: [ { _attr: testcases[j].$ } ] });
+                        contents.push({ testcase: [
+                            { _attr: testcases[j].$ }
+                        ] });
                     }
                 }
             }
             grunt.log.writeln('Creating ' + xunitFile + ' ...');
-            var xunit = [ {testsuite: contents} ];
+            var xunit = [
+                {testsuite: contents}
+            ];
             fs.writeFile(xunitFile, XML(xunit, true), function (err) {
                 if (err) {
                     grunt.log.error("error: " + err);
@@ -767,7 +773,7 @@ module.exports = function (grunt) {
         writeClientSpecs: function (file, callback) {
             var specs = this.getSpecs('client');
             var self = this;
-            var templateSrc = grunt.file.read(path.normalize(path.dirname(require.resolve('grunt-castle')) + '/spec.hbs'));
+            var templateSrc = grunt.file.read(path.resolve(__dirname, '../spec.hbs'));
             var template = handlebars.compile(templateSrc);
 
             function updateConfig(config) {
@@ -786,7 +792,7 @@ module.exports = function (grunt) {
                         }
                     } else {
                         if (module === 'grunt-castle') {
-                            paths['castle'] = path.dirname(require.resolve(module)) + '/castle';
+                            paths['castle'] = path.resolve(__dirname, '../castle');
                         } else if (module === 'chai') {
                             paths[module] = path.dirname(require.resolve(module)) + '/chai';
                         } else if (module === 'sinon') {
@@ -801,10 +807,15 @@ module.exports = function (grunt) {
             }
 
             function getRequirejsPath() {
-                var rjs = path.dirname(require.resolve('requirejs'));
-                rjs = rjs.split('/');
-                rjs = rjs.slice(1, rjs.length - 1);
-                return '/' + rjs.join('/') + '/require.js';
+                return path.resolve(path.dirname(require.resolve('requirejs')), '../require.js');
+            }
+
+            function escapeWindowsSeparator(path) {
+                return path.replace(/\\/g, '\\\\');
+            }
+
+            function replacer(key, value) {
+                return typeof value === 'string' ? escapeWindowsSeparator(value) : value;
             }
 
             function writeSpec(spec, specHtmlPath, callback) {
@@ -815,10 +826,11 @@ module.exports = function (grunt) {
                     //then we need to update the baseURL to point to the instrumented code
                     configObj.baseUrl = self.options.reporting.coverage.dest;
                 }
+
                 var templateData = {
-                    config: JSON.stringify(configObj),
-                    spec: path.resolve(spec),
-                    castle: JSON.stringify(global.castle.config),
+                    config: JSON.stringify(configObj, replacer),
+                    spec: escapeWindowsSeparator(path.resolve(spec)),
+                    castle: JSON.stringify(global.castle.config, replacer),
                     basePath: process.cwd() + '/node_modules/grunt-castle',
                     requirejsPath: getRequirejsPath()
                 };
@@ -864,10 +876,11 @@ module.exports = function (grunt) {
 
         specPathToHtmlSpecPath: function (specPath) {
             var htmlSpecDir = this.getHtmlSpecsPath();
-            var relativeSpecPath = specPath.replace(process.cwd() + '/', '').replace(this.options.specs.baseUrl + '/', '');
-            var absoluteHtmlSpecPath = path.normalize(htmlSpecDir + '/' + relativeSpecPath);
+            var specBasePath = path.resolve(process.cwd(), this.options.specs.baseUrl);
+            var relativeSpecPath = path.relative(specBasePath, specPath);
+            var absoluteHtmlSpecPath = path.resolve(htmlSpecDir, relativeSpecPath).replace(/\.js$/, '.html');
 
-            return path.normalize(path.dirname(absoluteHtmlSpecPath) + '/' + path.basename(absoluteHtmlSpecPath, '.js')) + '.html';
+            return absoluteHtmlSpecPath;
         },
 
         resolveFileSpec: function (spec, env) {
@@ -875,8 +888,8 @@ module.exports = function (grunt) {
             var paths = [];
 
             paths = _.unique(specs.map(function (spec) {
-                        return path.dirname(spec);
-                    }).sort());
+                return path.dirname(spec);
+            }).sort());
 
             var specPath;
             for (var i = 0; i < paths.length; i++) {
@@ -895,14 +908,13 @@ module.exports = function (grunt) {
                 try {
                     require('squirejs');
                 } catch (e) {
-                    paths[module] = path.dirname(require.resolve('squirejs')) + '/Squire';
+                    paths[module] = path.resolve(path.dirname(require.resolve('squirejs')), 'Squire');
                 }
+            } else if (module === 'grunt-castle') {
+                paths['castle'] = path.resolve(__dirname, '../castle');
+                ;
             } else {
                 paths[module] = path.dirname(require.resolve(module));
-                if (module === 'grunt-castle') {
-                    paths['castle'] = paths[module] + '/castle';
-                    delete paths[module];
-                }
             }
         });
 
