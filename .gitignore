@@ -1,6 +1,7 @@
+.idea
+lib-cov
 node_modules
 npm-debug.log
-tmp
-test/specs/client
 reports
-lib-cov
+test/specs/client
+tmp
