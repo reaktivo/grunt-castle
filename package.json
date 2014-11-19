@@ -42,7 +42,7 @@
         "test": "grunt test"
     },
     "dependencies":{
-        "chai": "1.9.x",
+        "chai": "1.10.x",
         "grunt": "0.4.x",
         "mocha": "1.12.x",
         "sinon-chai": "2.1.x",
