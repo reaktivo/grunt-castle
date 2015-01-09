@@ -414,7 +414,14 @@ module.exports = function (grunt) {
                 specs.forEach(function (spec, index) {
                     mocha.addFile(path.resolve(spec));
                 });
-                mocha.reporter('spec').run(function () {
+                mocha.reporter('spec').run(function (failures) {
+                    // If there are failures, return a fail exit code
+                    if(failures){
+                        process.on('exit', function () {
+                            process.exit(1);
+                        });
+                    }
+
                     callback();
                 });
             }
