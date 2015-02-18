@@ -1,7 +1,7 @@
 {
     "name": "grunt-castle",
     "description": "requirejs client, server, and client-server unit testing",
-    "version": "0.4.4",
+    "version": "0.4.5",
     "homepage": "https://github.com/walmartlabs/grunt-castle",
     "author": {
         "name": "Jason Strimpel",
